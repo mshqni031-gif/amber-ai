@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Amber — AI Mentor & Life Journal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <div class="sidebar-brand">
+                    <img src="/static/logo.png" onerror="this.onerror=null; this.src='/static/logo.svg';" class="brand-crest" alt="Amber Crest">
+                    <div class="brand-title-wrap">
+                        <span class="brand-title">Amber</span>
+                        <span class="brand-subtitle">AI Life Mentor</span>
+                    </div>
+                </div>
+                <button class="close-sidebar-mobile" id="closeSidebarBtn" title="Close sidebar">✕</button>
+            </div>
+
+            <div class="sidebar-action-wrap">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>New conversation</span>
+                </button>
+            </div>
+
+            <div class="chat-history-container">
+                <div class="history-label">Recent Conversations</div>
+                <div class="history-list" id="historyList">
+                    <!-- Dynamic chat tabs rendered here -->
+                </div>
+            </div>
+
+            <div class="sidebar-bottom">
+                <!-- USER PROFILE PILL (ChatGPT / Claude Style) -->
+                <div class="user-profile-pill" id="openProfileBtn" title="Aapka Profile (Click to change name & avatar)">
+                    <div class="user-avatar-circle" id="userPillAvatar">
+                        <span id="userPillInitial">U</span>
+                    </div>
+                    <div class="user-info-wrap">
+                        <span class="user-pill-name" id="userPillName">Guest User</span>
+                        <span class="user-pill-sub">Edit Profile</span>
+                    </div>
+                </div>
+
+                <!-- Shown ONLY to Authenticated Owner -->
+                <div id="sidebarOwnerSection" style="display: none; width: 100%;">
+                    <a href="/admin" class="nav-btn admin-link" title="Owner Admin Dashboard" style="width: 100%; margin-bottom: 6px;">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>👑 Owner Admin</span>
+                    </a>
+                </div>
+
+                <button class="nav-btn" id="openSettingsBtn" title="Settings" style="width: 100%;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>Settings</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEWPORT -->
+        <main class="main-viewport">
+            <!-- TOP BAR -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="menuToggle" aria-label="Open sidebar">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                    
+                    <div class="header-brand-group">
+                        <img src="/static/logo.png" onerror="this.onerror=null; this.src='/static/logo.svg';" class="header-crest" alt="Amber Logo">
+                        <div class="header-text">
+                            <div class="header-title-row">
+                                <span class="header-name">Amber</span>
+                                <span class="pulse-indicator" title="Live AI Connected"></span>
+                            </div>
+                            <span class="header-tagline">Mature AI Mentor & Life Journal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shown ONLY to Authenticated Owner -->
+                <div class="header-right" id="headerOwnerSection" style="display: none;">
+                    <a href="/admin" class="header-admin-pill" title="Open Owner Monitoring Dashboard">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>👑 Owner Admin</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- CHAT SCROLL AREA -->
+            <div class="chat-scroll" id="chatViewport">
+                <!-- CLEAN MINIMAL WELCOME VIEW -->
+                <div class="clean-welcome" id="welcomeView">
+                    <img src="/static/logo.png" onerror="this.onerror=null; this.src='/static/logo.svg';" class="welcome-crest" alt="Amber Emblem">
+                    <h1 class="welcome-title">Ask me whatever is on your mind.</h1>
+                </div>
+
+                <!-- MESSAGES STREAM -->
+                <div class="messages-stream" id="messagesContainer"></div>
+            </div>
+
+            <!-- FLOATING INPUT CONTAINER -->
+            <div class="input-dock">
+                <!-- FILE & IMAGE PREVIEW CONTAINER -->
+                <div class="image-preview-bar" id="imagePreviewContainer" style="display: none;">
+                    <div class="preview-card" id="imagePreviewCard">
+                        <img id="imagePreviewThumb" src="" alt="Attached image preview" style="display: none;">
+                        <div id="filePreviewBadge" class="file-preview-badge" style="display: none;">
+                            <span id="fileBadgeIcon">📄</span>
+                            <span id="fileBadgeExt">HTML</span>
+                        </div>
+                        <button type="button" class="remove-preview-btn" id="removeImageBtn" title="Remove attachment">✕</button>
+                    </div>
+                    <div class="preview-meta">
+                        <span class="preview-filename" id="imagePreviewName">file.html</span>
+                        <span class="preview-filesize" id="imagePreviewSize">0 KB</span>
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <!-- Hidden File Input: Accepts all files (HTML, images, documents, text) -->
+                    <input type="file" id="imageFileInput" accept="*/*" style="display: none;">
+
+                    <!-- Attach Button -->
+                    <button class="icon-action-btn attach-btn" id="attachBtn" title="Attach file (HTML, text, document) or image">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+                    </button>
+
+                    <textarea 
+                        id="chatInput" 
+                        class="chat-textarea" 
+                        placeholder="Hello, gorgeous! Do you want to discuss something?" 
+                        rows="1"
+                    ></textarea>
+                    
+                    <div class="dock-actions">
+                        <button class="icon-action-btn mic-btn" id="voiceBtn" title="Voice input in Urdu/English">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                        </button>
+                        <button class="amber-send-btn" id="sendBtn" title="Send to Amber">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="dock-footnote">
+                    <span>Amber &bull; Composite Wisdom of 8 Master Literature Dossiers</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SETTINGS & OWNER UNLOCK MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3>System Settings & Owner Access</h3>
+                <button class="close-btn" id="closeSettingsBtn">✕</button>
+            </div>
+            
+            <div class="modal-content">
+                <!-- OWNER LOGIN SECTION -->
+                <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+                    <div style="font-weight: 600; font-size: 13.5px; color: #fbbf24; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                        <span>👑 Owner Portal Unlock</span>
+                    </div>
+                    <div id="ownerStatusText" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                        Agar aap owner hain toh apna Master Password darj karein taake Admin Panel unlock ho jaye.
+                    </div>
+                    <div id="ownerLoginForm" style="display: flex; gap: 8px;">
+                        <input type="password" id="ownerModalPassword" placeholder="Owner Password" style="flex: 1; padding: 8px 12px; font-size: 13px;">
+                        <button type="button" class="save-btn" id="unlockOwnerBtn" style="white-space: nowrap;">Unlock</button>
+                    </div>
+                    <div id="ownerSuccessMsg" style="display: none; color: #10b981; font-size: 12.5px; margin-top: 6px; font-weight: 600;">
+                        ✅ Aap Owner account se logged in hain! Admin button ab active hai.
+                    </div>
+                    <button type="button" id="lockOwnerBtn" style="display: none; background: transparent; border: 1px solid #ef4444; color: #ef4444; border-radius: 6px; padding: 4px 10px; font-size: 11.5px; cursor: pointer; margin-top: 8px;">
+                        Lock / Log Out
+                    </button>
+                </div>
+
+                <!-- GENDER SETTING SECTION -->
+                <div style="border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: 12px;">
+                    <label for="genderSelect" style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px;">
+                        👤 Guftagu ka Lehja / Gender Preference:
+                    </label>
+                    <select id="genderSelect" style="width: 100%; background: #0c181d; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; color: #ffffff; padding: 8px 12px; font-size: 13px; outline: none;">
+                        <option value="auto">Auto-detect (Chat mein batane par khud samajh le)</option>
+                        <option value="male">Male / Muzakkar ("Kaise hain aap? Kaisa guzra din?")</option>
+                        <option value="female">Female / Mu'annas ("Kaisi hain aap? Kaisa guzra din?")</option>
+                    </select>
+                    <p class="modal-tip" style="margin-top: 4px;">Agar female select karein ya chat mein bolein toh Amber mukammal taur par mu'annas seeghe mein guftagu karegi.</p>
+                </div>
+
+                <!-- API KEY SECTION -->
+                <div style="border-top: 1px solid var(--glass-border); padding-top: 12px;">
+                    <label for="apiKeyField" style="font-size: 13px; color: var(--text-secondary);">Google AI Studio API Key:</label>
+                    <input type="password" id="apiKeyField" placeholder="Paste your API Key" style="margin-top: 6px;">
+                    <p class="modal-tip" style="margin-top: 4px;">Aapki API key pehle se backend (.env) mein active hai. Agar nayi key lagani ho tabhi yahan daalein.</p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="save-btn" id="saveKeyBtn">Save API Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER PROFILE MODAL (Name, Username & Avatar Photo) -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-head">
+                <h3>User Profile & Identity</h3>
+                <button class="close-btn" id="closeProfileBtn">✕</button>
+            </div>
+            
+            <div class="modal-content">
+                <!-- AVATAR UPLOAD SECTION -->
+                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; text-align: center;">
+                    <div style="position: relative; width: 84px; height: 84px; margin-bottom: 12px;">
+                        <div id="modalAvatarPreview" style="width: 84px; height: 84px; border-radius: 50%; background: #14303d; border: 2px solid var(--amber-primary); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; color: #fbbf24; overflow: hidden; box-shadow: 0 0 20px var(--amber-glow);">
+                            <span id="modalAvatarInitial">U</span>
+                        </div>
+                    </div>
+                    <input type="file" id="profileAvatarInput" accept="image/*" style="display: none;">
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" id="uploadAvatarBtn" style="padding: 7px 16px; font-size: 13px; font-weight: 600; border-radius: 8px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; cursor: pointer; transition: all 0.2s;">
+                            📷 Upload Photo
+                        </button>
+                        <button type="button" id="removeAvatarBtn" style="padding: 7px 14px; font-size: 13px; font-weight: 600; border-radius: 8px; background: transparent; border: 1px solid rgba(239, 68, 68, 0.4); color: #ef4444; cursor: pointer; transition: all 0.2s;">
+                            ✕ Remove
+                        </button>
+                    </div>
+                </div>
+
+                <!-- NAME FIELD -->
+                <div style="margin-bottom: 16px;">
+                    <label for="userNameInput" style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: 600;">
+                        Aapka Naam / Display Name:
+                    </label>
+                    <input type="text" id="userNameInput" placeholder="Apna naam darj karein (e.g. Shani, Zarrar, Fatima)..." style="width: 100%; background: #0c181d; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; color: #ffffff; padding: 10px 14px; font-size: 14px; outline: none;">
+                    <p class="modal-tip" style="margin-top: 5px;">Amber aapse isi naam se mukhatib hogi aur naseehat karegi.</p>
+                </div>
+
+                <!-- GENDER PREFERENCE -->
+                <div style="margin-bottom: 16px;">
+                    <label for="profileGenderSelect" style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: 600;">
+                        Guftagu ka Lehja / Gender:
+                    </label>
+                    <select id="profileGenderSelect" style="width: 100%; background: #0c181d; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; color: #ffffff; padding: 10px 14px; font-size: 13.5px; outline: none;">
+                        <option value="auto">Auto-detect (Chat ke mutabiq khud samajh le)</option>
+                        <option value="male">Male / Muzakkar ("Kaise hain aap")</option>
+                        <option value="female">Female / Mu'annas ("Kaisi hain aap")</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="save-btn" id="saveProfileBtn" style="width: 100%; padding: 12px; font-weight: 700; font-size: 14.5px;">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amber — Owner & Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #071115;
+            --bg-sidebar: #0b171e;
+            --bg-card: #11222b;
+            --bg-card-hover: #162c37;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-main: #f0f0f0;
+            --text-muted: #94a3b8;
+            --amber-primary: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.35);
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --user-bubble: #143747;
+            --bot-bubble: linear-gradient(145deg, rgba(245, 158, 11, 0.12) 0%, rgba(11, 23, 30, 0.95) 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* LOGIN SCREEN (LOCKED GATE) */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            background: radial-gradient(circle at center, rgba(20, 184, 166, 0.08) 0%, #071115 70%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: #0d1a22;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 24px rgba(245, 158, 11, 0.1);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .login-crest {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid rgba(245, 158, 11, 0.45);
+            filter: drop-shadow(0 0 16px var(--amber-glow));
+        }
+
+        .login-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .login-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .login-input {
+            width: 100%;
+            background: #071115;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14.5px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--amber-primary);
+            box-shadow: 0 0 12px var(--amber-glow);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14.5px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 16px var(--amber-glow);
+            transition: all 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 22px rgba(245, 158, 11, 0.6);
+        }
+
+        .login-error {
+            color: #ef4444;
+            font-size: 13px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12.5px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #ffffff; }
+
+        /* DASHBOARD LAYOUT */
+        .dashboard-container {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Top Header */
+        .admin-header {
+            height: 60px;
+            background-color: var(--bg-sidebar);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .brand-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-crest-small {
+            width: 34px;
+            height: 34px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1.5px solid rgba(245, 158, 11, 0.4);
+            filter: drop-shadow(0 0 8px var(--amber-glow));
+        }
+
+        .brand-title {
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .owner-badge {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-link-btn {
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .action-link-btn:hover {
+            background-color: var(--bg-card-hover);
+            border-color: #555;
+        }
+
+        .refresh-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+        }
+        .refresh-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .logout-btn:hover {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        /* KPI Stats Ribbon */
+        .stats-ribbon {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 16px 24px;
+            background-color: #09141a;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Main Split View */
+        .admin-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Left Sidebar: Sessions List */
+        .sessions-sidebar {
+            width: 380px;
+            border-right: 1px solid var(--border-color);
+            background-color: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .search-box-wrap {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            outline: none;
+        }
+        .search-input:focus {
+            border-color: var(--amber-primary);
+        }
+
+        /* SELECTION & BULK ACTION TOOLBAR */
+        .selection-toolbar {
+            padding: 9px 14px;
+            background-color: #0c1820;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .selection-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-checkbox-wrap {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"],
+        .session-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 17px;
+            height: 17px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            outline: none;
+            position: relative;
+            transition: all 0.18s ease;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"]:checked,
+        .session-checkbox:checked {
+            background-color: var(--amber-primary);
+            border-color: var(--amber-primary);
+        }
+
+        .custom-checkbox-wrap input[type="checkbox"]:checked::after,
+        .session-checkbox:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 4px;
+            height: 8px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .selected-counter {
+            font-size: 11px;
+            color: var(--amber-primary);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(245, 158, 11, 0.12);
+            border-radius: 10px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            white-space: nowrap;
+        }
+
+        .bulk-delete-btn {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .bulk-delete-btn:hover:not(:disabled) {
+            background-color: #ef4444;
+            color: #ffffff;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.45);
+            transform: scale(1.02);
+        }
+
+        .bulk-delete-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .session-item.selected {
+            background-color: rgba(245, 158, 11, 0.09);
+            border-color: rgba(245, 158, 11, 0.45);
+        }
+
+        .session-item-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .session-item-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .item-quick-delete-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            opacity: 0.6;
+            transition: all 0.15s;
+        }
+
+        .item-quick-delete-btn:hover {
+            color: #ef4444;
+            opacity: 1;
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        .sessions-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .session-item {
+            background-color: var(--bg-card);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .session-item:hover {
+            background-color: var(--bg-card-hover);
+            border-color: #444;
+        }
+
+        .session-item.active {
+            background-color: #122834;
+            border-color: var(--amber-primary);
+        }
+
+        .session-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 230px;
+        }
+
+        .session-count-badge {
+            background: #223844;
+            color: var(--amber-primary);
+            font-size: 11px;
+            padding: 2px 7px;
+            border-radius: 10px;
+        }
+
+        .session-item-meta {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .session-snippet {
+            font-size: 12.5px;
+            color: #bbb;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Right Area: Conversation Transcript */
+        .transcript-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .transcript-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #0b171e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trans-info-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .trans-info-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 16px;
+        }
+
+        .delete-btn {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .delete-btn:hover {
+            background-color: var(--accent-red);
+            color: white;
+        }
+
+        .messages-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .msg-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-width: 82%;
+        }
+
+        .msg-block.user {
+            align-self: flex-end;
+        }
+
+        .msg-block.model {
+            align-self: flex-start;
+        }
+
+        .msg-sender-meta {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .msg-block.user .msg-sender-meta {
+            justify-content: flex-end;
+        }
+
+        .msg-content-bubble {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14.5px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .msg-block.user .msg-content-bubble {
+            background-color: var(--user-bubble);
+            color: #ffffff;
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-bottom-right-radius: 2px;
+        }
+
+        .msg-block.model .msg-content-bubble {
+            background: var(--bot-bubble);
+            color: #f8fafc;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-bottom-left-radius: 2px;
+        }
+
+        .empty-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. OWNER LOGIN GATE (SHOWN WHEN NOT LOGGED IN) -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <img src="/static/logo.png" onerror="this.onerror=null; this.src='/static/logo.svg';" class="login-crest" alt="Amber Crest">
+            <div>
+                <div class="login-title">Amber Owner Portal</div>
+                <div class="login-subtitle">Sirf Owner (Aap) ke liye protected panel. Apna Master Password darj karein.</div>
+            </div>
+            
+            <form onsubmit="handleLogin(event)" style="display:flex; flex-direction:column; gap:12px;">
+                <input 
+                    type="password" 
+                    id="ownerPasswordInput" 
+                    class="login-input" 
+                    placeholder="Enter Owner Password..." 
+                    autocomplete="current-password"
+                    required
+                >
+                <button type="submit" class="login-btn" id="loginSubmitBtn">Unlock Dashboard</button>
+            </form>
+            <div class="login-error" id="loginErrorMsg">Ghalat password! Durust password darj karein.</div>
+            <div>
+                <a href="/" class="back-link">&larr; Chatbot par wapas jayein</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. PROTECTED DASHBOARD CONTAINER (SHOWN ONLY TO AUTHENTICATED OWNER) -->
+    <div class="dashboard-container" id="dashboardContainer">
+        <!-- TOP HEADER -->
+        <header class="admin-header">
+            <div class="brand-area">
+                <img src="/static/logo.png" onerror="this.onerror=null; this.src='/static/logo.svg';" class="brand-crest-small" alt="Amber">
+                <div class="brand-title">Amber Intelligence</div>
+                <span class="owner-badge">👑 Verified Owner</span>
+            </div>
+            <div class="header-actions">
+                <button class="action-link-btn refresh-btn" id="refreshBtn" onclick="loadDashboard()">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                    <span>Refresh</span>
+                </button>
+                <a href="/" class="action-link-btn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    <span>Chatbot</span>
+                </a>
+                <button class="action-link-btn logout-btn" onclick="handleLogout()" title="Lock panel">
+                    <span>Lock / Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI STATS RIBBON -->
+        <div class="stats-ribbon">
+            <div class="stat-card">
+                <span class="stat-label">Total Conversations</span>
+                <span class="stat-value" id="statSessions">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Messages Monitored</span>
+                <span class="stat-value" id="statMessages">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Messages Today</span>
+                <span class="stat-value" id="statToday">0</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Unique Devices / IPs</span>
+                <span class="stat-value" id="statUsers">0</span>
+            </div>
+        </div>
+
+        <!-- MAIN VIEW -->
+        <div class="admin-main">
+            <!-- LEFT: SESSIONS LIST -->
+            <aside class="sessions-sidebar">
+                <div class="search-box-wrap">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search conversations by title or text..."
+                        oninput="filterSessions()"
+                    >
+                </div>
+
+                <!-- SELECTION & BULK ACTION BAR -->
+                <div class="selection-toolbar" id="selectionToolbar">
+                    <div class="selection-toolbar-left">
+                        <label class="custom-checkbox-wrap" title="Select / Deselect all visible chats">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)">
+                            <span id="selectAllLabel">Select All</span>
+                        </label>
+                        <span class="selected-counter" id="selectedCounter">0 selected</span>
+                    </div>
+                    <div class="selection-toolbar-right">
+                        <button class="bulk-delete-btn" id="bulkDeleteBtn" onclick="deleteSelectedSessions()" disabled title="Delete selected chats">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            <span id="bulkDeleteBtnText">Delete</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="sessions-list" id="sessionsListContainer">
+                    <div style="text-align: center; color: #777; margin-top: 20px;">Loading sessions...</div>
+                </div>
+            </aside>
+
+            <!-- RIGHT: CONVERSATION TRANSCRIPT -->
+            <main class="transcript-view" id="transcriptView">
+                <div class="empty-placeholder" id="emptyPlaceholder">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    <div>Select any conversation from the left to view user queries and Amber's replies.</div>
+                </div>
+
+                <!-- Active Conversation Details (hidden until clicked) -->
+                <div id="activeTranscriptContent" style="display: none; height: 100%; flex-direction: column;">
+                    <div class="transcript-header">
+                        <div>
+                            <div class="trans-info-title" id="transTitle">Chat Title</div>
+                            <div class="trans-info-sub">
+                                <span><strong>Session ID:</strong> <span id="transSessionId"></span></span>
+                                <span><strong>IP / Device:</strong> <span id="transIp"></span></span>
+                                <span><strong>Started:</strong> <span id="transDate"></span></span>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="delete-btn" id="deleteSessionBtn" onclick="deleteActiveSession()">
+                                Delete Conversation
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="messages-scroll" id="messagesScroll"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        let allSessions = [];
+        let activeSessionId = null;
+        let selectedSessionIds = new Set();
+        let currentVisibleSessions = [];
+
+        // CHECK AUTH ON LOAD
+        async function checkOwnerAuth() {
+            try {
+                const res = await fetch('/api/admin/check_auth');
+                const data = await res.json();
+                if (data.is_owner) {
+                    showDashboard();
+                } else {
+                    showLogin();
+                }
+            } catch (e) {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('dashboardContainer').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboardContainer').style.display = 'flex';
+            loadDashboard();
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const pw = document.getElementById('ownerPasswordInput').value.trim();
+            const errorMsg = document.getElementById('loginErrorMsg');
+            errorMsg.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pw })
+                });
+
+                if (res.ok) {
+                    showDashboard();
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.textContent = 'Ghalat password! Durust password darj karein.';
+                }
+            } catch (err) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = 'Server se rabta nahi ho saka.';
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await fetch('/api/admin/logout', { method: 'POST' });
+            } catch (e) {}
+            showLogin();
+        }
+
+        async function loadDashboard() {
+            try {
+                // 1. Fetch Stats
+                const statsRes = await fetch('/api/admin/stats');
+                if (statsRes.status === 401) {
+                    showLogin();
+                    return;
+                }
+                const stats = await statsRes.json();
+                document.getElementById('statSessions').textContent = stats.total_sessions || 0;
+                document.getElementById('statMessages').textContent = stats.total_messages || 0;
+                document.getElementById('statToday').textContent = stats.today_messages || 0;
+                document.getElementById('statUsers').textContent = stats.unique_users || 0;
+
+                // 2. Fetch Sessions
+                const sessRes = await fetch('/api/admin/sessions');
+                allSessions = await sessRes.json();
+                renderSessionsList(allSessions);
+
+                if (activeSessionId) {
+                    selectSession(activeSessionId);
+                }
+            } catch (err) {
+                console.error("Failed to load dashboard data:", err);
+            }
+        }
+
+        function renderSessionsList(list) {
+            currentVisibleSessions = list || [];
+            const container = document.getElementById('sessionsListContainer');
+            if (!list || list.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #777; margin-top: 30px;">No chats recorded yet. Start a conversation on the chatbot!</div>';
+                updateSelectionUI();
+                return;
+            }
+
+            container.innerHTML = '';
+            list.forEach(sess => {
+                const isSelected = selectedSessionIds.has(sess.session_id);
+                const isActive = sess.session_id === activeSessionId;
+
+                const item = document.createElement('div');
+                item.className = `session-item ${isActive ? 'active' : ''} ${isSelected ? 'selected' : ''}`;
+                item.id = `sess_item_${sess.session_id}`;
+
+                item.innerHTML = `
+                    <div class="session-item-row">
+                        <input 
+                            type="checkbox" 
+                            class="session-checkbox" 
+                            ${isSelected ? 'checked' : ''} 
+                            onchange="toggleSessionSelect(event, '${sess.session_id}')"
+                            onclick="event.stopPropagation()"
+                            title="Select chat"
+                        >
+                        <div class="session-item-main" onclick="selectSession('${sess.session_id}')">
+                            <div class="session-item-header">
+                                <span class="session-item-title">${escapeHtml(sess.title || 'Untitled Chat')}</span>
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <span class="session-count-badge">${sess.message_count} msgs</span>
+                                    <button class="item-quick-delete-btn" onclick="quickDeleteSession(event, '${sess.session_id}')" title="Delete chat immediately">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="session-snippet">
+                                ${sess.last_message ? escapeHtml(sess.last_message) : 'No messages'}
+                            </div>
+                            <div class="session-item-meta">
+                                <span>IP: ${escapeHtml(sess.user_ip || 'Local')}</span>
+                                <span>${sess.updated_at ? sess.updated_at.slice(5, 16) : ''}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            updateSelectionUI();
+        }
+
+        function toggleSessionSelect(event, sessionId) {
+            event.stopPropagation();
+            const checked = event.target.checked;
+            if (checked) {
+                selectedSessionIds.add(sessionId);
+            } else {
+                selectedSessionIds.delete(sessionId);
+            }
+
+            const itemElem = document.getElementById(`sess_item_${sessionId}`);
+            if (itemElem) {
+                itemElem.classList.toggle('selected', checked);
+            }
+            updateSelectionUI();
+        }
+
+        function toggleSelectAll(checked) {
+            if (!currentVisibleSessions || currentVisibleSessions.length === 0) return;
+            if (checked) {
+                currentVisibleSessions.forEach(s => selectedSessionIds.add(s.session_id));
+            } else {
+                currentVisibleSessions.forEach(s => selectedSessionIds.delete(s.session_id));
+            }
+            renderSessionsList(currentVisibleSessions);
+        }
+
+        function updateSelectionUI() {
+            const counter = document.getElementById('selectedCounter');
+            const bulkBtn = document.getElementById('bulkDeleteBtn');
+            const bulkBtnText = document.getElementById('bulkDeleteBtnText');
+            const selectAllCb = document.getElementById('selectAllCheckbox');
+
+            const count = selectedSessionIds.size;
+            if (counter) counter.textContent = `${count} selected`;
+
+            if (bulkBtn) {
+                bulkBtn.disabled = count === 0;
+            }
+            if (bulkBtnText) {
+                bulkBtnText.textContent = count > 0 ? `Delete (${count})` : 'Delete';
+            }
+
+            if (selectAllCb) {
+                if (currentVisibleSessions.length > 0) {
+                    const allSelected = currentVisibleSessions.every(s => selectedSessionIds.has(s.session_id));
+                    selectAllCb.checked = allSelected;
+                } else {
+                    selectAllCb.checked = false;
+                }
+            }
+        }
+
+        async function quickDeleteSession(event, sessionId) {
+            event.stopPropagation();
+            if (!confirm("Are you sure you want to delete this chat immediately?")) return;
+
+            try {
+                const res = await fetch(`/api/admin/session/${sessionId}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("Delete failed");
+
+                selectedSessionIds.delete(sessionId);
+                if (activeSessionId === sessionId) {
+                    activeSessionId = null;
+                    document.getElementById('activeTranscriptContent').style.display = 'none';
+                    document.getElementById('emptyPlaceholder').style.display = 'flex';
+                }
+                await loadDashboard();
+            } catch (err) {
+                alert("Could not delete chat: " + err.message);
+            }
+        }
+
+        async function deleteSelectedSessions() {
+            const count = selectedSessionIds.size;
+            if (count === 0) return;
+
+            if (!confirm(`Are you sure you want to delete ${count} selected chat(s)? This action cannot be undone.`)) {
+                return;
+            }
+
+            const bulkBtn = document.getElementById('bulkDeleteBtn');
+            const bulkBtnText = document.getElementById('bulkDeleteBtnText');
+            if (bulkBtn) bulkBtn.disabled = true;
+            if (bulkBtnText) bulkBtnText.textContent = 'Deleting...';
+
+            try {
+                const res = await fetch('/api/admin/sessions/bulk-delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_ids: Array.from(selectedSessionIds) })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || "Failed to delete sessions");
+                }
+
+                if (selectedSessionIds.has(activeSessionId)) {
+                    activeSessionId = null;
+                    document.getElementById('activeTranscriptContent').style.display = 'none';
+                    document.getElementById('emptyPlaceholder').style.display = 'flex';
+                }
+
+                selectedSessionIds.clear();
+                await loadDashboard();
+            } catch (err) {
+                alert("Error deleting chats: " + err.message);
+                updateSelectionUI();
+            }
+        }
+
+        async function selectSession(sessionId) {
+            activeSessionId = sessionId;
+            renderSessionsList(allSessions);
+
+            try {
+                const res = await fetch(`/api/admin/session/${sessionId}`);
+                if (!res.ok) return;
+                const data = await res.json();
+
+                document.getElementById('emptyPlaceholder').style.display = 'none';
+                const contentArea = document.getElementById('activeTranscriptContent');
+                contentArea.style.display = 'flex';
+
+                document.getElementById('transTitle').textContent = data.title || 'Conversation';
+                document.getElementById('transSessionId').textContent = data.session_id;
+                document.getElementById('transIp').textContent = data.user_ip || 'Local';
+                document.getElementById('transDate').textContent = data.created_at || 'Recently';
+
+                const scrollBox = document.getElementById('messagesScroll');
+                scrollBox.innerHTML = '';
+
+                data.messages.forEach(msg => {
+                    const isUser = msg.role === 'user';
+                    const block = document.createElement('div');
+                    block.className = `msg-block ${isUser ? 'user' : 'model'}`;
+
+                    block.innerHTML = `
+                        <div class="msg-sender-meta">
+                            <strong>${isUser ? 'User' : 'Amber (AI Mentor)'}</strong>
+                            <span>&bull; ${msg.timestamp ? msg.timestamp.slice(11, 16) : ''}</span>
+                        </div>
+                        <div class="msg-content-bubble">${escapeHtml(msg.content)}</div>
+                    `;
+                    scrollBox.appendChild(block);
+                });
+
+                scrollBox.scrollTop = scrollBox.scrollHeight;
+            } catch (err) {
+                console.error("Error loading session detail:", err);
+            }
+        }
+
+        async function deleteActiveSession() {
+            if (!activeSessionId) return;
+            if (!confirm("Are you sure you want to delete this conversation from the database?")) return;
+
+            try {
+                const toDel = activeSessionId;
+                await fetch(`/api/admin/session/${toDel}`, { method: 'DELETE' });
+                selectedSessionIds.delete(toDel);
+                activeSessionId = null;
+                document.getElementById('activeTranscriptContent').style.display = 'none';
+                document.getElementById('emptyPlaceholder').style.display = 'flex';
+                await loadDashboard();
+            } catch (err) {
+                console.error("Failed to delete session:", err);
+            }
+        }
+
+        function filterSessions() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!query) {
+                renderSessionsList(allSessions);
+                return;
+            }
+            const filtered = allSessions.filter(s => 
+                (s.title && s.title.toLowerCase().includes(query)) ||
+                (s.last_message && s.last_message.toLowerCase().includes(query)) ||
+                (s.user_ip && s.user_ip.toLowerCase().includes(query))
+            );
+            renderSessionsList(filtered);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        // Auto-refresh every 12 seconds when active
+        setInterval(() => {
+            if (document.getElementById('dashboardContainer').style.display === 'flex') {
+                loadDashboard();
+            }
+        }, 12000);
+
+        // Start
+        checkOwnerAuth();
+    </script>
+</body>
+</html>

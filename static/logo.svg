@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Gold gradients -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="35%" stop-color="#f59e0b"/>
+      <stop offset="70%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="goldGlow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="50%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <!-- Dark jewel gradient -->
+    <radialGradient id="jewelGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#164e63"/>
+      <stop offset="60%" stop-color="#0e2a36"/>
+      <stop offset="100%" stop-color="#071217"/>
+    </radialGradient>
+    <!-- Outer ambient glow -->
+    <filter id="ambientGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Aura / Glow Ring -->
+  <circle cx="100" cy="100" r="92" fill="none" stroke="url(#goldGrad)" stroke-width="1.5" stroke-opacity="0.4" filter="url(#ambientGlow)"/>
+  
+  <!-- Laurel / Wreath Leaves (Left Side) -->
+  <g fill="url(#goldGrad)">
+    <path d="M 45 100 C 40 85 46 70 54 60 C 51 68 50 78 52 86 Z"/>
+    <path d="M 52 75 C 50 62 58 50 68 42 C 63 50 62 60 63 68 Z"/>
+    <path d="M 66 54 C 67 42 78 33 90 28 C 84 35 81 44 80 52 Z"/>
+    <path d="M 45 100 C 40 115 46 130 54 140 C 51 132 50 122 52 114 Z"/>
+    <path d="M 52 125 C 50 138 58 150 68 158 C 63 150 62 140 63 132 Z"/>
+    <path d="M 66 146 C 67 158 78 167 90 172 C 84 165 81 156 80 148 Z"/>
+  </g>
+
+  <!-- Laurel / Wreath Leaves (Right Side) -->
+  <g fill="url(#goldGrad)" transform="translate(200, 0) scale(-1, 1)">
+    <path d="M 45 100 C 40 85 46 70 54 60 C 51 68 50 78 52 86 Z"/>
+    <path d="M 52 75 C 50 62 58 50 68 42 C 63 50 62 60 63 68 Z"/>
+    <path d="M 66 54 C 67 42 78 33 90 28 C 84 35 81 44 80 52 Z"/>
+    <path d="M 45 100 C 40 115 46 130 54 140 C 51 132 50 122 52 114 Z"/>
+    <path d="M 52 125 C 50 138 58 150 68 158 C 63 150 62 140 63 132 Z"/>
+    <path d="M 66 146 C 67 158 78 167 90 172 C 84 165 81 156 80 148 Z"/>
+  </g>
+
+  <!-- Central Crest Circle with Dark Teal Jewel -->
+  <circle cx="100" cy="100" r="62" fill="url(#jewelGrad)" stroke="url(#goldGrad)" stroke-width="3"/>
+  <circle cx="100" cy="100" r="56" fill="none" stroke="url(#goldGlow)" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.6"/>
+
+  <!-- Ornate Golden Monogram "A" (Amber) -->
+  <g fill="url(#goldGlow)" filter="url(#ambientGlow)">
+    <!-- Crown / Crest Top Accent -->
+    <polygon points="100,55 96,62 104,62"/>
+    <circle cx="100" cy="52" r="2.5" fill="#fef08a"/>
+    <circle cx="91" cy="56" r="1.8" fill="#fbbf24"/>
+    <circle cx="109" cy="56" r="1.8" fill="#fbbf24"/>
+
+    <!-- Stylized Serif 'A' -->
+    <path d="M 97 68 L 84 130 L 92 130 L 96 112 L 104 112 L 108 130 L 116 130 L 103 68 Z M 100 85 L 103 105 L 97 105 Z" fill-rule="evenodd"/>
+    
+    <!-- Underline Flourish / Ribbon Base -->
+    <path d="M 82 136 Q 100 142 118 136 Q 100 139 82 136 Z"/>
+  </g>
+</svg>
